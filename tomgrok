@@ -1,0 +1,80 @@
+#!/bin/bash
+
+export CP="cp"
+export RM="rm -fr"
+export MKDIR="mkdir"
+export LN="ln -s"
+
+export THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+export TOMCAT_DIR="$THIS_SCRIPT_DIR/tomcat-7.0.56"
+export OPENGROK_DIR="$THIS_SCRIPT_DIR/opengrok-0.12.1.5"
+
+
+function create_context {
+	$CP $OPENGROK_DIR/lib/source.war $TOMCAT_DIR/webapps/$1.war
+	$MKDIR -p $THIS_SCRIPT_DIR/sources/$1
+	$MKDIR -p $THIS_SCRIPT_DIR/datas/$1
+}
+
+
+function remove_context {
+	local tar_dir=$1
+	local tar_war="${tar_dir}.war"
+	$RM $TOMCAT_DIR/webapps/$tar_dir $TOMCAT_DIR/webapps/$tar_war $TOMCAT_DIR/work/Catalina/localhost/$tar_dir
+	$RM $THIS_SCRIPT_DIR/sources/$1
+	$RM $THIS_SCRIPT_DIR/datas/$1
+}
+
+
+# absolute path
+function abs_path {
+	echo "$(cd "$(dirname "$1")"; pwd)/$(basename "$1")"
+}
+
+# function index {
+
+# }
+
+
+#######
+# Main
+#######
+
+case $1 in
+	'create')
+		create_context $2
+		;;
+	'remove')
+		remove_context $2
+		;;
+	'startup')
+		if [ ! -d "$TOMCAT_DIR/logs" ]; then
+			mkdir "$TOMCAT_DIR/logs"
+		fi
+		sh $TOMCAT_DIR/bin/startup.sh
+		;;
+	'shutdown')
+		sh $TOMCAT_DIR/bin/shutdown.sh
+		;;
+	'link')
+		$LN `abs_path $3` $THIS_SCRIPT_DIR/sources/$2/`basename $3`
+		;;
+	'unlink')
+		$RM $THIS_SCRIPT_DIR/sources/$2/$3
+		;;
+	'index')
+		export SRC_ROOT=$THIS_SCRIPT_DIR/sources/$2
+		export DATA_ROOT=$THIS_SCRIPT_DIR/datas/$2
+		export GROK=$OPENGROK_DIR/bin/OpenGrok
+
+		# cd $OPENGROK_DIR/bin
+		# SRC_ROOT=$THIS_SCRIPT_DIR/sources/$2 DATA_ROOT=$THIS_SCRIPT_DIR/datas/$2 $GROK index $SRC_ROOT
+		OPENGROK_INSTANCE_BASE=$THIS_SCRIPT_DIR $GROK index $
+		;;
+	'index-all')
+		abs_path $2
+		;;
+	*)
+		echo "wrong command"
+		;;
+esac
