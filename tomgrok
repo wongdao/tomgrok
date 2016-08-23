@@ -4,16 +4,21 @@ export CP="cp"
 export RM="rm -fr"
 export MKDIR="mkdir"
 export LN="ln -s"
+export CP="cp -r"
+export MV="mv"
 
 export THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd . && pwd )"
+export CONTEXTS_DIR="$THIS_SCRIPT_DIR/contexts"
 export TOMCAT_DIR="$THIS_SCRIPT_DIR/apache-tomcat-8.5.4"
 export OPENGROK_DIR="$THIS_SCRIPT_DIR/opengrok-0.12.1.5"
 
+export GROK=$OPENGROK_DIR/bin/OpenGrok
 
 function create_context {
 	$CP $OPENGROK_DIR/lib/source.war $TOMCAT_DIR/webapps/$1.war
-	$MKDIR -p $THIS_SCRIPT_DIR/sources/$1
-	$MKDIR -p $THIS_SCRIPT_DIR/datas/$1
+	$MKDIR -p $CONTEXTS_DIR/$1/src
+	$MKDIR -p $CONTEXTS_DIR/$1/data
+	$MKDIR -p $CONTEXTS_DIR/$1/etc
 }
 
 
@@ -21,8 +26,9 @@ function remove_context {
 	local tar_dir=$1
 	local tar_war="${tar_dir}.war"
 	$RM $TOMCAT_DIR/webapps/$tar_dir $TOMCAT_DIR/webapps/$tar_war $TOMCAT_DIR/work/Catalina/localhost/$tar_dir
-	$RM $THIS_SCRIPT_DIR/sources/$1
-	$RM $THIS_SCRIPT_DIR/datas/$1
+	$RM $CONTEXTS_DIR/$1/src
+	$RM $CONTEXTS_DIR/$1/data
+	$RM $CONTEXTS_DIR/$1/etc
 }
 
 
@@ -30,10 +36,6 @@ function remove_context {
 function abs_path {
 	echo "$(cd "$(dirname "$1")"; pwd)/$(basename "$1")"
 }
-
-# function index {
-
-# }
 
 
 #######
@@ -47,6 +49,9 @@ case $1 in
 	'remove')
 		remove_context $2
 		;;
+	'list')
+		ls $CONTEXTS_DIR  # list all contexts
+		;;
 	'startup')
 		if [ ! -d "$TOMCAT_DIR/logs" ]; then
 			mkdir "$TOMCAT_DIR/logs"
@@ -57,22 +62,41 @@ case $1 in
 		sh $TOMCAT_DIR/bin/shutdown.sh
 		;;
 	'link')
-		$LN `abs_path $3` $THIS_SCRIPT_DIR/sources/$2/`basename $3`
+		# eg.
+		#  $ tomgrok link haha proj1
+		# equals:
+		#  $ ln -s /xx/yy/.../proj1 /aa/bb/.../contexts/haha/proj1
+		$LN `abs_path $3` $CONTEXTS_DIR/$2/src/`basename $3`
 		;;
-	'unlink')
-		$RM $THIS_SCRIPT_DIR/sources/$2/$3
+	'copy')
+		# eg.
+		#  $ tomgrok copy haha proj1
+		# equals:
+		#  $ cp -r /xx/yy/.../proj1 /aa/bb/.../contexts/haha/proj1
+		$CP `abs_path $3` $CONTEXTS_DIR/$2/src/`basename $3`
+		;;
+	'delete')
+		$RM $CONTEXTS_DIR/$2/src/`basename $3`
 		;;
 	'index')
-		export SRC_ROOT=$THIS_SCRIPT_DIR/sources/$2
-		export DATA_ROOT=$THIS_SCRIPT_DIR/datas/$2
-		export GROK=$OPENGROK_DIR/bin/OpenGrok
+		# generate index data
+		OPENGROK_INSTANCE_BASE=$CONTEXTS_DIR/$2 \
+		 OPENGROK_TOMCAT_BASE=$TOMCAT_DIR \
+		 OPENGROK_WEBAPP_CFGADDR=none \
+		 OPENGROK_WEBAPP_CONTEXT=$2 \
+		 $GROK index
 
-		# cd $OPENGROK_DIR/bin
-		# SRC_ROOT=$THIS_SCRIPT_DIR/sources/$2 DATA_ROOT=$THIS_SCRIPT_DIR/datas/$2 $GROK index $SRC_ROOT
-		OPENGROK_INSTANCE_BASE=$THIS_SCRIPT_DIR $GROK index $
+ 		# update configuration.xml in container
+	    conf_pathname=`echo $CONTEXTS_DIR/$2/etc/configuration\.xml | sed 's/\//\\\\\//g'`
+		#set -x
+		$CP $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml.bak
+		sed "s/<param-value>.*configuration\.xml<\/param-value>/<param-value>$conf_pathname<\/param-value>/" \
+		 $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml > $TOMCAT_DIR/webapps/$2/WEB-INF/web2.xml && \
+		 $MV $TOMCAT_DIR/webapps/$2/WEB-INF/web2.xml $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml
+		#set -
 		;;
 	'index-all')
-		abs_path $2
+		# todo
 		;;
 	*)
 		echo "wrong command"
