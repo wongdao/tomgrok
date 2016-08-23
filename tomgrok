@@ -89,9 +89,9 @@ case $1 in
  		# update configuration.xml in container
 	    conf_pathname=`echo $CONTEXTS_DIR/$2/etc/configuration\.xml | sed 's/\//\\\\\//g'`
 		#set -x
-		$CP $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml.bak
 		sed "s/<param-value>.*configuration\.xml<\/param-value>/<param-value>$conf_pathname<\/param-value>/" \
 		 $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml > $TOMCAT_DIR/webapps/$2/WEB-INF/web2.xml && \
+		 $CP $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml.bak && \
 		 $MV $TOMCAT_DIR/webapps/$2/WEB-INF/web2.xml $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml
 		#set -
 		;;
