@@ -41,7 +41,11 @@ function remove_context {
 
 # absolute path
 function abs_path {
-	echo "$(cd "$(dirname "$1")"; pwd)/$(basename "$1")"
+    if [ $1 == "." ]; then 
+        echo `pwd`
+    else
+	    echo "$(cd "$(dirname "$1")"; pwd)/$(basename "$1")"
+    fi
 }
 
 
@@ -116,7 +120,7 @@ case $1 in
 		#set -
 		;;
 	'index-all')
-		# todo
+		# todo each all contexts to index
 		;;
 	*)
 		echo "wrong command"
