@@ -98,6 +98,22 @@ case $1 in
             echo wrong link arguments
         fi
 		;;
+	'link-projects')
+        $RM $CONTEXTS_DIR/$2/src
+        if [ $# -eq 3 ]; then
+            $LN `abs_path $3` $CONTEXTS_DIR/$2/src
+        else
+            echo wrong link arguments
+        fi
+		;;
+	'copy-projects')
+        $RM $CONTEXTS_DIR/$2/src
+        if [ $# -eq 3 ]; then
+            $CP `abs_path $3` $CONTEXTS_DIR/$2/src
+        else
+            echo wrong link arguments
+        fi
+		;;
 	'delete')
 		$RM $CONTEXTS_DIR/$2/src/`basename $3`
 		;;
