@@ -13,12 +13,21 @@ export TOMCAT_DIR="$THIS_SCRIPT_DIR/apache-tomcat-8.5.4"
 export OPENGROK_DIR="$THIS_SCRIPT_DIR/opengrok-0.12.1.5"
 
 export GROK=$OPENGROK_DIR/bin/OpenGrok
+export PRESERVED_OPTCONF=$THIS_SCRIPT_DIR/tomgrok-default-conf/options.conf
+
+function OPTCONF {
+    echo "$CONTEXTS_DIR/$1/etc/options.conf"
+}
 
 function create_context {
-	$CP $OPENGROK_DIR/lib/source.war $TOMCAT_DIR/webapps/$1.war
+	# $CP $OPENGROK_DIR/lib/source.war $TOMCAT_DIR/webapps/$1.war
+	unzip $OPENGROK_DIR/lib/source.war -d $TOMCAT_DIR/webapps/$1
+
 	$MKDIR -p $CONTEXTS_DIR/$1/src
 	$MKDIR -p $CONTEXTS_DIR/$1/data
 	$MKDIR -p $CONTEXTS_DIR/$1/etc
+
+    $CP $PRESERVED_OPTCONF `OPTCONF $1`
 }
 
 
@@ -26,9 +35,7 @@ function remove_context {
 	local tar_dir=$1
 	local tar_war="${tar_dir}.war"
 	$RM $TOMCAT_DIR/webapps/$tar_dir $TOMCAT_DIR/webapps/$tar_war $TOMCAT_DIR/work/Catalina/localhost/$tar_dir
-	$RM $CONTEXTS_DIR/$1/src
-	$RM $CONTEXTS_DIR/$1/data
-	$RM $CONTEXTS_DIR/$1/etc
+	$RM $CONTEXTS_DIR/$1
 }
 
 
@@ -66,24 +73,37 @@ case $1 in
 		#  $ tomgrok link haha proj1
 		# equals:
 		#  $ ln -s /xx/yy/.../proj1 /aa/bb/.../contexts/haha/proj1
-		$LN `abs_path $3` $CONTEXTS_DIR/$2/src/`basename $3`
+        if [ $# -eq 3 ]; then
+            $LN `abs_path $3` $CONTEXTS_DIR/$2/src/`basename $3`
+        elif [ $# -eq 4 ]; then
+            $LN `abs_path $3` $CONTEXTS_DIR/$2/src/$4
+        else
+            echo wrong link arguments
+        fi
 		;;
 	'copy')
 		# eg.
 		#  $ tomgrok copy haha proj1
 		# equals:
 		#  $ cp -r /xx/yy/.../proj1 /aa/bb/.../contexts/haha/proj1
-		$CP `abs_path $3` $CONTEXTS_DIR/$2/src/`basename $3`
+        if [ $# -eq 3 ]; then
+            $CP `abs_path $3` $CONTEXTS_DIR/$2/src/`basename $3`
+        elif [ $# -eq 4 ]; then
+            $CP `abs_path $3` $CONTEXTS_DIR/$2/src/$4
+        else
+            echo wrong link arguments
+        fi
 		;;
 	'delete')
 		$RM $CONTEXTS_DIR/$2/src/`basename $3`
 		;;
 	'index')
+        # $2: context name
 		# generate index data
 		OPENGROK_INSTANCE_BASE=$CONTEXTS_DIR/$2 \
 		 OPENGROK_TOMCAT_BASE=$TOMCAT_DIR \
-		 OPENGROK_WEBAPP_CFGADDR=none \
 		 OPENGROK_WEBAPP_CONTEXT=$2 \
+         OPENGROK_CONFIGURATION=`OPTCONF $2` \
 		 $GROK index
 
  		# update configuration.xml in container
