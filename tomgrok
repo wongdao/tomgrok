@@ -54,6 +54,9 @@ function abs_path {
 #######
 
 case $1 in
+    'version')
+        echo 0.5
+        ;;
 	'create')
 		create_context $2
 		;;
