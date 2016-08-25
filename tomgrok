@@ -15,8 +15,42 @@ export OPENGROK_DIR="$THIS_SCRIPT_DIR/opengrok-0.12.1.5"
 export GROK=$OPENGROK_DIR/bin/OpenGrok
 export PRESERVED_OPTCONF=$THIS_SCRIPT_DIR/tomgrok-default-conf/options.conf
 
+TOMGROK_VERSOIN=0.5
+MYNAME=`basename "$0"`
+
+function print_help() {
+	cat << EOF
+Usage: $MYNAME <command parameters>
+
+This script is a wrapper around the tools opengrok and apache-tomcat. It can provide some simple command to use the opengrok and config.
+
+$MYNAME parameters list:
+  create <context>           Create a new context.
+  remove <context>           Remove a context.
+  list                       List the exists context.
+  startup                    Startup the web service.
+  shutdown                   Shutdown the web service.
+  link <context> <proj-path> Add a link of the project's sources to the context.
+  copy <context> <proj-path> Add a copy of the project's sources to the context.
+  link-projects <context> <projs-path>
+                             Add the links that each all the subdirectory as a project to the context.
+  copy-projects <context> <projs-path>
+                             Add a copy that each all the subdirectory as a project to the context.
+  delete <context> <project> Remove the project of the context.
+  index <context>            Generate index data of the context.
+  index-all                  Generate index data each all the exists contexts.[Todo]
+  port <port>                Set the port of the web service. default is 8080
+  version                    Show the current version.
+  help                       Print this help.
+EOF
+}
+
+function print_versoin() {
+	echo $TOMGROK_VERSOIN
+}
+
 function OPTCONF {
-    echo "$CONTEXTS_DIR/$1/etc/options.conf"
+	echo "$CONTEXTS_DIR/$1/etc/options.conf"
 }
 
 function create_context {
@@ -55,7 +89,7 @@ function abs_path {
 
 case $1 in
     'version')
-        echo 0.5
+        print_versoin
         ;;
     'port')
         if [ $# == 1 ]; then
@@ -79,7 +113,7 @@ case $1 in
 		remove_context $2
 		;;
 	'list')
-        $MKDIR $CONTEXTS_DIR
+		$MKDIR $CONTEXTS_DIR
 		ls $CONTEXTS_DIR  # list all contexts
 		;;
 	'startup')
@@ -114,7 +148,7 @@ case $1 in
         elif [ $# -eq 4 ]; then
             $CP `abs_path $3` $CONTEXTS_DIR/$2/src/$4
         else
-            echo wrong link arguments
+            echo wrong copy arguments
         fi
 		;;
 	'link-projects')
@@ -130,7 +164,7 @@ case $1 in
         if [ $# -eq 3 ]; then
             $CP `abs_path $3` $CONTEXTS_DIR/$2/src
         else
-            echo wrong link arguments
+            echo wrong copy arguments
         fi
 		;;
 	'delete')
@@ -156,6 +190,6 @@ case $1 in
 		# todo each all contexts to index
 		;;
 	*)
-		echo "wrong command"
+		print_help
 		;;
 esac
