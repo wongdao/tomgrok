@@ -63,6 +63,9 @@ case $1 in
                 -e 's/.*<Connector port="\(.*\)" .*/\1/' \
                 $TOMCAT_DIR/conf/server.xml
         else
+            if [ ! -f $TOMCAT_DIR/conf/server.xml.orig ]; then
+                $CP $TOMCAT_DIR/conf/server.xml $TOMCAT_DIR/conf/server.xml.orig
+            fi
             sed "s/<Connector port=\".*\" protocol=\"HTTP\/1\.1\"/<Connector port=\"$2\" protocol=\"HTTP\/1\.1\"/" \
                 $TOMCAT_DIR/conf/server.xml > $TOMCAT_DIR/conf/server2.xml && \
                 $MV $TOMCAT_DIR/conf/server.xml $TOMCAT_DIR/conf/server.xml.bak && \
