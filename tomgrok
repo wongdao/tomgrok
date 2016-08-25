@@ -2,7 +2,7 @@
 
 export CP="cp"
 export RM="rm -fr"
-export MKDIR="mkdir"
+export MKDIR="mkdir -p"
 export LN="ln -s"
 export CP="cp -r"
 export MV="mv"
@@ -23,9 +23,9 @@ function create_context {
 	# $CP $OPENGROK_DIR/lib/source.war $TOMCAT_DIR/webapps/$1.war
 	unzip $OPENGROK_DIR/lib/source.war -d $TOMCAT_DIR/webapps/$1
 
-	$MKDIR -p $CONTEXTS_DIR/$1/src
-	$MKDIR -p $CONTEXTS_DIR/$1/data
-	$MKDIR -p $CONTEXTS_DIR/$1/etc
+	$MKDIR $CONTEXTS_DIR/$1/src
+	$MKDIR $CONTEXTS_DIR/$1/data
+	$MKDIR $CONTEXTS_DIR/$1/etc
 
     $CP $PRESERVED_OPTCONF `OPTCONF $1`
 }
@@ -61,6 +61,7 @@ case $1 in
 		remove_context $2
 		;;
 	'list')
+        $MKDIR $CONTEXTS_DIR
 		ls $CONTEXTS_DIR  # list all contexts
 		;;
 	'startup')
