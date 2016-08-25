@@ -58,9 +58,16 @@ case $1 in
         echo 0.5
         ;;
     'port')
-        sed -e '/<Connector port="8080" protocol="HTTP\/1\.1"/!d' \
-            -e 's/.*<Connector port="\(.*\)" .*/\1/' \
-            $TOMCAT_DIR/conf/server.xml
+        if [ $# == 1 ]; then
+            sed -e '/<Connector port=".*" protocol="HTTP\/1\.1"/!d' \
+                -e 's/.*<Connector port="\(.*\)" .*/\1/' \
+                $TOMCAT_DIR/conf/server.xml
+        else
+            sed "s/<Connector port=\".*\" protocol=\"HTTP\/1\.1\"/<Connector port=\"$2\" protocol=\"HTTP\/1\.1\"/" \
+                $TOMCAT_DIR/conf/server.xml > $TOMCAT_DIR/conf/server2.xml && \
+                $MV $TOMCAT_DIR/conf/server.xml $TOMCAT_DIR/conf/server.xml.bak && \
+                $MV $TOMCAT_DIR/conf/server2.xml $TOMCAT_DIR/conf/server.xml
+        fi
         ;;
 	'create')
 		create_context $2
