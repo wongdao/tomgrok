@@ -57,6 +57,11 @@ case $1 in
     'version')
         echo 0.5
         ;;
+    'port')
+        sed -e '/<Connector port="8080" protocol="HTTP\/1\.1"/!d' \
+            -e 's/.*<Connector port="\(.*\)" .*/\1/' \
+            $TOMCAT_DIR/conf/server.xml
+        ;;
 	'create')
 		create_context $2
 		;;
@@ -78,9 +83,9 @@ case $1 in
 		;;
 	'link')
 		# eg.
-		#  $ tomgrok link haha proj1
+		#  $ tomgrok link haha proj1 (proj1-alias)
 		# equals:
-		#  $ ln -s /xx/yy/.../proj1 /aa/bb/.../contexts/haha/proj1
+		#  $ ln -s /xx/yy/.../proj1 /aa/bb/.../contexts/haha/[proj1|proj1-alias]
         if [ $# -eq 3 ]; then
             $LN `abs_path $3` $CONTEXTS_DIR/$2/src/`basename $3`
         elif [ $# -eq 4 ]; then
@@ -91,9 +96,9 @@ case $1 in
 		;;
 	'copy')
 		# eg.
-		#  $ tomgrok copy haha proj1
+		#  $ tomgrok copy haha proj1 (proj1-alias)
 		# equals:
-		#  $ cp -r /xx/yy/.../proj1 /aa/bb/.../contexts/haha/proj1
+		#  $ cp -r /xx/yy/.../proj1 /aa/bb/.../contexts/haha/[proj1|proj1-alias]
         if [ $# -eq 3 ]; then
             $CP `abs_path $3` $CONTEXTS_DIR/$2/src/`basename $3`
         elif [ $# -eq 4 ]; then
@@ -132,12 +137,10 @@ case $1 in
 
  		# update configuration.xml in container
 	    conf_pathname=`echo $CONTEXTS_DIR/$2/etc/configuration\.xml | sed 's/\//\\\\\//g'`
-		#set -x
 		sed "s/<param-value>.*configuration\.xml<\/param-value>/<param-value>$conf_pathname<\/param-value>/" \
 		 $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml > $TOMCAT_DIR/webapps/$2/WEB-INF/web2.xml && \
 		 $CP $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml.bak && \
 		 $MV $TOMCAT_DIR/webapps/$2/WEB-INF/web2.xml $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml
-		#set -
 		;;
 	'index-all')
 		# todo each all contexts to index
