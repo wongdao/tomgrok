@@ -177,6 +177,9 @@ case $1 in
 		 OPENGROK_TOMCAT_BASE=$TOMCAT_DIR \
 		 OPENGROK_WEBAPP_CONTEXT=$2 \
          OPENGROK_CONFIGURATION=`OPTCONF $2` \
+         OPENGROK_WEBAPP_CFGADDR=none \
+         OPENGROK_GENERATE_HISTORY=off \
+         IGNORE_PATTERNS="-i .idea -i *.jar -i *.so -i *.iml -i *out/* -i *build/* -i *gradle/*" \
 		 $GROK index
 
  		# update configuration.xml in container
