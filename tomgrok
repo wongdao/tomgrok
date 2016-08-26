@@ -168,7 +168,11 @@ case $1 in
         fi
 		;;
 	'delete')
-		$RM $CONTEXTS_DIR/$2/src/`basename $3`
+        if [ $# == 3 ]; then
+		        $RM $CONTEXTS_DIR/$2/src/`basename $3`
+        else
+            echo missing parameter
+        fi
 		;;
 	'index')
         # $2: context name
