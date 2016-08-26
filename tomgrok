@@ -19,7 +19,7 @@ TOMGROK_VERSOIN=0.5
 MYNAME=`basename "$0"`
 
 function print_help() {
-	cat << EOF
+    cat << EOF
 Usage: $MYNAME <command parameters>
 
 This script is a wrapper around the tools opengrok and apache-tomcat. It can provide some simple command to use the opengrok and config.
@@ -47,30 +47,30 @@ EOF
 }
 
 function print_versoin() {
-	echo $TOMGROK_VERSOIN
+    echo $TOMGROK_VERSOIN
 }
 
 function OPTCONF {
-	echo "$CONTEXTS_DIR/$1/etc/options.conf"
+    echo "$CONTEXTS_DIR/$1/etc/options.conf"
 }
 
 function create_context {
-	# $CP $OPENGROK_DIR/lib/source.war $TOMCAT_DIR/webapps/$1.war
-	unzip $OPENGROK_DIR/lib/source.war -d $TOMCAT_DIR/webapps/$1
+    # $CP $OPENGROK_DIR/lib/source.war $TOMCAT_DIR/webapps/$1.war
+    unzip $OPENGROK_DIR/lib/source.war -d $TOMCAT_DIR/webapps/$1
 
-	$MKDIR $CONTEXTS_DIR/$1/src
-	$MKDIR $CONTEXTS_DIR/$1/data
-	$MKDIR $CONTEXTS_DIR/$1/etc
+    $MKDIR $CONTEXTS_DIR/$1/src
+    $MKDIR $CONTEXTS_DIR/$1/data
+    $MKDIR $CONTEXTS_DIR/$1/etc
 
     $CP $PRESERVED_OPTCONF `OPTCONF $1`
 }
 
 
 function remove_context {
-	local tar_dir=$1
-	local tar_war="${tar_dir}.war"
-	$RM $TOMCAT_DIR/webapps/$tar_dir $TOMCAT_DIR/webapps/$tar_war $TOMCAT_DIR/work/Catalina/localhost/$tar_dir
-	$RM $CONTEXTS_DIR/$1
+    local tar_dir=$1
+    local tar_war="${tar_dir}.war"
+    $RM $TOMCAT_DIR/webapps/$tar_dir $TOMCAT_DIR/webapps/$tar_war $TOMCAT_DIR/work/Catalina/localhost/$tar_dir
+    $RM $CONTEXTS_DIR/$1
 }
 
 
@@ -79,7 +79,7 @@ function abs_path {
     if [ $1 == "." ]; then 
         echo `pwd`
     else
-	    echo "$(cd "$(dirname "$1")"; pwd)/$(basename "$1")"
+        echo "$(cd "$(dirname "$1")"; pwd)/$(basename "$1")"
     fi
 }
 
@@ -107,13 +107,13 @@ case $1 in
                 $MV $TOMCAT_DIR/conf/server2.xml $TOMCAT_DIR/conf/server.xml
         fi
         ;;
-	'create')
-		create_context $2
-		;;
-	'remove')
-		remove_context $2
-		;;
-	'list')
+    'create')
+    	create_context $2
+    	;;
+    'remove')
+    	remove_context $2
+    	;;
+    'list')
         if [ $# == 1 ]; then
             $MKDIR $CONTEXTS_DIR
             ls $CONTEXTS_DIR  # list all contexts
@@ -122,21 +122,21 @@ case $1 in
         else
             echo wrong arguments
         fi
-		;;
-	'startup')
-		if [ ! -d "$TOMCAT_DIR/logs" ]; then
-			mkdir "$TOMCAT_DIR/logs"
-		fi
-		sh $TOMCAT_DIR/bin/startup.sh
-		;;
-	'shutdown')
-		sh $TOMCAT_DIR/bin/shutdown.sh
-		;;
-	'link')
-		# eg.
-		#  $ tomgrok link haha proj1 (proj1-alias)
-		# equals:
-		#  $ ln -s /xx/yy/.../proj1 /aa/bb/.../contexts/haha/[proj1|proj1-alias]
+    	;;
+    'startup')
+    	if [ ! -d "$TOMCAT_DIR/logs" ]; then
+    		mkdir "$TOMCAT_DIR/logs"
+    	fi
+    	sh $TOMCAT_DIR/bin/startup.sh
+    	;;
+    'shutdown')
+    	sh $TOMCAT_DIR/bin/shutdown.sh
+    	;;
+    'link')
+    	# eg.
+    	#  $ tomgrok link haha proj1 (proj1-alias)
+    	# equals:
+    	#  $ ln -s /xx/yy/.../proj1 /aa/bb/.../contexts/haha/[proj1|proj1-alias]
         if [ $# -eq 3 ]; then
             $LN `abs_path $3` $CONTEXTS_DIR/$2/src/`basename $3`
         elif [ $# -eq 4 ]; then
@@ -144,12 +144,12 @@ case $1 in
         else
             echo wrong link arguments
         fi
-		;;
-	'copy')
-		# eg.
-		#  $ tomgrok copy haha proj1 (proj1-alias)
-		# equals:
-		#  $ cp -r /xx/yy/.../proj1 /aa/bb/.../contexts/haha/[proj1|proj1-alias]
+    	;;
+    'copy')
+    	# eg.
+    	#  $ tomgrok copy haha proj1 (proj1-alias)
+    	# equals:
+    	#  $ cp -r /xx/yy/.../proj1 /aa/bb/.../contexts/haha/[proj1|proj1-alias]
         if [ $# -eq 3 ]; then
             $CP `abs_path $3` $CONTEXTS_DIR/$2/src/`basename $3`
         elif [ $# -eq 4 ]; then
@@ -157,53 +157,53 @@ case $1 in
         else
             echo wrong copy arguments
         fi
-		;;
-	'link-projects')
+    	;;
+    'link-projects')
         $RM $CONTEXTS_DIR/$2/src
         if [ $# -eq 3 ]; then
             $LN `abs_path $3` $CONTEXTS_DIR/$2/src
         else
             echo wrong link arguments
         fi
-		;;
-	'copy-projects')
+    	;;
+    'copy-projects')
         $RM $CONTEXTS_DIR/$2/src
         if [ $# -eq 3 ]; then
             $CP `abs_path $3` $CONTEXTS_DIR/$2/src
         else
             echo wrong copy arguments
         fi
-		;;
-	'delete')
+    	;;
+    'delete')
         if [ $# == 3 ]; then
-		        $RM $CONTEXTS_DIR/$2/src/`basename $3`
+    	        $RM $CONTEXTS_DIR/$2/src/`basename $3`
         else
             echo missing parameter
         fi
-		;;
-	'index')
+    	;;
+    'index')
         # $2: context name
-		# generate index data
-		OPENGROK_INSTANCE_BASE=$CONTEXTS_DIR/$2 \
-		 OPENGROK_TOMCAT_BASE=$TOMCAT_DIR \
-		 OPENGROK_WEBAPP_CONTEXT=$2 \
+    	# generate index data
+    	OPENGROK_INSTANCE_BASE=$CONTEXTS_DIR/$2 \
+    	 OPENGROK_TOMCAT_BASE=$TOMCAT_DIR \
+    	 OPENGROK_WEBAPP_CONTEXT=$2 \
          OPENGROK_CONFIGURATION=`OPTCONF $2` \
          OPENGROK_WEBAPP_CFGADDR=none \
          OPENGROK_GENERATE_HISTORY=off \
          IGNORE_PATTERNS="-i .idea -i *.jar -i *.so -i *.iml -i *out/* -i *build/* -i *gradle/*" \
-		 $GROK index
+    	 $GROK index
 
- 		# update configuration.xml in container
-	    conf_pathname=`echo $CONTEXTS_DIR/$2/etc/configuration\.xml | sed 's/\//\\\\\//g'`
-		sed "s/<param-value>.*configuration\.xml<\/param-value>/<param-value>$conf_pathname<\/param-value>/" \
-		 $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml > $TOMCAT_DIR/webapps/$2/WEB-INF/web2.xml && \
-		 $CP $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml.bak && \
-		 $MV $TOMCAT_DIR/webapps/$2/WEB-INF/web2.xml $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml
-		;;
-	'index-all')
-		# todo each all contexts to index
-		;;
-	*)
-		print_help
-		;;
+     	# update configuration.xml in container
+        conf_pathname=`echo $CONTEXTS_DIR/$2/etc/configuration\.xml | sed 's/\//\\\\\//g'`
+    	sed "s/<param-value>.*configuration\.xml<\/param-value>/<param-value>$conf_pathname<\/param-value>/" \
+    	 $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml > $TOMCAT_DIR/webapps/$2/WEB-INF/web2.xml && \
+    	 $CP $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml.bak && \
+    	 $MV $TOMCAT_DIR/webapps/$2/WEB-INF/web2.xml $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml
+    	;;
+    'index-all')
+    	# todo each all contexts to index
+    	;;
+    *)
+    	print_help
+    	;;
 esac
