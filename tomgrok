@@ -28,6 +28,7 @@ $MYNAME parameters list:
   create <context>           Create a new context.
   remove <context>           Remove a context.
   list                       List the exists context.
+  list <context>             List the projects of specified context.
   startup                    Startup the web service.
   shutdown                   Shutdown the web service.
   link <context> <proj-path> Add a link of the project's sources to the context.
@@ -113,8 +114,14 @@ case $1 in
 		remove_context $2
 		;;
 	'list')
-		$MKDIR $CONTEXTS_DIR
-		ls $CONTEXTS_DIR  # list all contexts
+        if [ $# == 1 ]; then
+            $MKDIR $CONTEXTS_DIR
+            ls $CONTEXTS_DIR  # list all contexts
+        elif [ $# == 2 ]; then
+            ls $CONTEXTS_DIR/$2/src
+        else
+            echo wrong arguments
+        fi
 		;;
 	'startup')
 		if [ ! -d "$TOMCAT_DIR/logs" ]; then
