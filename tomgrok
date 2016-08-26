@@ -43,6 +43,23 @@ $MYNAME parameters list:
   port <port>                Set the port of the web service. default is 8080
   version                    Show the current version.
   help                       Print this help.
+
+Example:
+1. Create some contexts as webapps:
+tomgrok create mysrc1
+
+2. Add some projects:
+tomgrok link mysrc1 /path-to-project1
+tomgrok link mysrc1 /path-to-project2
+
+3. Generate index data:
+tomgrok index mysrc1
+
+4. Start web service:
+tomgrok startup
+
+Now you can access this url as default:
+http://localhost:8080/mysrc1/xref
 EOF
 }
 
