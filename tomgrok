@@ -29,6 +29,7 @@ $MYNAME parameters list:
   remove <context>           Remove a context.
   list                       List the exists context.
   list <context>             List the projects of specified context.
+  list <context> <path>      List the files of specified context and project.
   startup                    Startup the web service.
   shutdown                   Shutdown the web service.
   link <context> <proj-path> Add a link of the project's sources to the context.
@@ -119,6 +120,8 @@ case $1 in
             ls $CONTEXTS_DIR  # list all contexts
         elif [ $# == 2 ]; then
             ls $CONTEXTS_DIR/$2/src
+        elif [ $# == 3 ]; then
+            ls $CONTEXTS_DIR/$2/src/$3
         else
             echo wrong arguments
         fi
