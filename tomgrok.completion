@@ -1,0 +1,43 @@
+export THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd . && pwd )"
+export CONTEXTS_DIR="$THIS_SCRIPT_DIR/contexts"
+
+function _list_contexts() {
+    if [ "$(ls -A $CONTEXTS_DIR)" ]; then
+        local contexts=`ls -d "${CONTEXTS_DIR}"/* | tr ' ' '_' | xargs -n 1  basename`
+        COMPREPLY=($(compgen -o filenames -W "${contexts}" -- $cur))
+    fi
+}
+
+function _tomgrok() {
+    COMPREPLY=()
+    local cur=${COMP_WORDS[COMP_CWORD]};
+    local com=${COMP_WORDS[COMP_CWORD-1]};
+    case $com in
+        'tomgrok')
+            COMPREPLY=($(compgen -W 'create remove list startup shutdown link copy link-projects copy-projects delete index index-all port version help' -- $cur))
+            ;;
+        'remove')
+            _list_contexts
+            ;;
+        'list')
+            _list_contexts
+            ;;
+        'link' | 'copy')
+            _list_contexts
+            ;;
+        'link-projects' | 'copy-projects')
+            _list_contexts
+            ;;
+        'index')
+            _list_contexts
+            ;;
+        *)
+            COMPREPLY=($(compgen -f  -- "${COMP_WORDS[${COMP_CWORD}]}" ))
+            for ((ff=0; ff<${#COMPREPLY[@]}; ff++)); do
+                test -d "${COMPREPLY[$ff]}" && COMPREPLY[$ff]="${COMPREPLY[$ff]}/"
+                test -f "${COMPREPLY[$ff]}" && COMPREPLY[$ff]="${COMPREPLY[$ff]}"
+            done
+            ;;
+    esac
+}
+complete -F _tomgrok tomgrok
