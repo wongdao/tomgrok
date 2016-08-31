@@ -9,7 +9,7 @@ export MV="mv"
 
 export THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd . && pwd )"
 export CONTEXTS_DIR="$THIS_SCRIPT_DIR/contexts"
-export TOMCAT_DIR="$THIS_SCRIPT_DIR/apache-tomcat-8.5.4"
+export TOMCAT_DIR="$THIS_SCRIPT_DIR/apache-tomcat-7.0.70"
 export OPENGROK_DIR="$THIS_SCRIPT_DIR/opengrok-0.12.1.5"
 
 export GROK=$OPENGROK_DIR/bin/OpenGrok
