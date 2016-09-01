@@ -68,6 +68,14 @@ function print_versoin() {
     echo $TOMGROK_VERSOIN
 }
 
+# check_args_num num want_num
+function check_args_num() {
+    if [ $1 != $2 ]; then
+        echo wrong arguments
+        exit 1
+    fi
+}
+
 function OPTCONF {
     echo "$CONTEXTS_DIR/$1/etc/options.conf"
 }
@@ -126,11 +134,13 @@ case $1 in
         fi
         ;;
     'create')
-    	create_context $2
-    	;;
+        check_args_num $# 2
+        create_context $2
+        ;;
     'remove')
-    	remove_context $2
-    	;;
+        check_args_num $# 2
+        remove_context $2
+        ;;
     'list')
         if [ $# == 1 ]; then
             $MKDIR $CONTEXTS_DIR
