@@ -6,7 +6,8 @@ Tomgrok 是基于对 OpenGrok 和 Apache Tomcat 包装的一套脚本，致力�
 
 ### 怎么用？
 #### 安装
-下载后直接运行即可，建议设置目录到你的搜索路径 PATH。
+
+下载后直接运行 `tomgrok` 即可，建议设置目录到你的搜索路径 PATH，并将自动完成脚本 `tomgrok.completion` 加入到你的 `~/.bashrc`。
 
 注意：需要 Exuberant Ctags 或 Universal Ctags。
 
