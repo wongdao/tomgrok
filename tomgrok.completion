@@ -1,9 +1,12 @@
+#!/bin/bash
+
 export THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd . && pwd )"
 export CONTEXTS_DIR="$THIS_SCRIPT_DIR/contexts"
 
 function _list_contexts() {
-    if [ "$(ls -A $CONTEXTS_DIR)" ]; then
-        local contexts=`ls -d "${CONTEXTS_DIR}"/* | tr ' ' '_' | xargs -n 1  basename`
+    local context_name=$CONTEXTS_DIR/$1
+    if [ "$(ls -A ${context_name})" ]; then
+        local contexts=`ls -d "${context_name}"/* | tr ' ' '_' | xargs -n 1  basename`
         COMPREPLY=($(compgen -o filenames -W "${contexts}" -- $cur))
     fi
 }
@@ -12,11 +15,18 @@ function _tomgrok() {
     COMPREPLY=()
     local cur=${COMP_WORDS[COMP_CWORD]};
     local com=${COMP_WORDS[COMP_CWORD-1]};
+
+    local subcmd=${COMP_WORDS[1]}
+    local subcmdopts=${COMP_WORDS[2]}
+
     case $com in
         'tomgrok')
             COMPREPLY=($(compgen -W 'create remove list startup shutdown link copy link-projects copy-projects delete index index-all port version help' -- $cur))
             ;;
         'remove')
+            _list_contexts
+            ;;
+        'delete')
             _list_contexts
             ;;
         'list')
@@ -33,6 +43,14 @@ function _tomgrok() {
             ;;
         *)
             COMPREPLY=($(compgen -f  -- "${COMP_WORDS[${COMP_CWORD}]}" ))
+            # for projects completion
+            case "${subcmd}" in
+                'delete' )
+                    _list_contexts ${subcmdopts}/src
+                    ;;
+            esac
+
+            # others
             for ((ff=0; ff<${#COMPREPLY[@]}; ff++)); do
                 test -d "${COMPREPLY[$ff]}" && COMPREPLY[$ff]="${COMPREPLY[$ff]}/"
                 test -f "${COMPREPLY[$ff]}" && COMPREPLY[$ff]="${COMPREPLY[$ff]}"
@@ -41,3 +59,11 @@ function _tomgrok() {
     esac
 }
 complete -F _tomgrok tomgrok
+
+# Local variables:
+# mode: shell-script
+# sh-basic-offset: 4
+# sh-indent-comment: t
+# indent-tabs-mode: nil
+# End:
+# ex: ts=4 sw=4 et filetype=sh
