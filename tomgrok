@@ -18,7 +18,56 @@ export PRESERVED_OPTCONF=$THIS_SCRIPT_DIR/tomgrok-default-conf/options.conf
 TOMGROK_VERSOIN=0.5
 MYNAME=`basename "$0"`
 
-function print_help() {
+# check_args_num num want_num
+function check_args_num() {
+    if [ $1 != $2 ]; then
+        echo wrong arguments
+        exit 1
+    fi
+}
+
+function OPTCONF {
+    echo "$CONTEXTS_DIR/$1/etc/options.conf"
+}
+
+function create_context {
+    # $CP $OPENGROK_DIR/lib/source.war $TOMCAT_DIR/webapps/$1.war
+    unzip $OPENGROK_DIR/lib/source.war -d $TOMCAT_DIR/webapps/$1
+
+    $MKDIR $CONTEXTS_DIR/$1/src
+    $MKDIR $CONTEXTS_DIR/$1/data
+    $MKDIR $CONTEXTS_DIR/$1/etc
+
+    $CP $PRESERVED_OPTCONF `OPTCONF $1`
+}
+
+function remove_context {
+    local tar_dir=$1
+    local tar_war="${tar_dir}.war"
+    $RM $TOMCAT_DIR/webapps/$tar_dir $TOMCAT_DIR/webapps/$tar_war $TOMCAT_DIR/work/Catalina/localhost/$tar_dir
+    $RM $CONTEXTS_DIR/$1
+}
+
+# absolute path
+function abs_path {
+    if [ $1 == "." ]; then
+        echo `pwd`
+    else
+        echo "$(cd "$(dirname "$1")"; pwd)/$(basename "$1")"
+    fi
+}
+
+##############
+# All command
+##############
+
+# print the version
+function cmd_print_version() {
+    echo $TOMGROK_VERSOIN
+}
+
+# print the help
+function cmd_print_help() {
     cat << EOF
 Usage: $MYNAME <command parameters>
 
@@ -64,49 +113,146 @@ http://localhost:8080/mysrc1/xref
 EOF
 }
 
-function print_versoin() {
-    echo $TOMGROK_VERSOIN
-}
-
-# check_args_num num want_num
-function check_args_num() {
-    if [ $1 != $2 ]; then
-        echo wrong arguments
-        exit 1
-    fi
-}
-
-function OPTCONF {
-    echo "$CONTEXTS_DIR/$1/etc/options.conf"
-}
-
-function create_context {
-    # $CP $OPENGROK_DIR/lib/source.war $TOMCAT_DIR/webapps/$1.war
-    unzip $OPENGROK_DIR/lib/source.war -d $TOMCAT_DIR/webapps/$1
-
-    $MKDIR $CONTEXTS_DIR/$1/src
-    $MKDIR $CONTEXTS_DIR/$1/data
-    $MKDIR $CONTEXTS_DIR/$1/etc
-
-    $CP $PRESERVED_OPTCONF `OPTCONF $1`
-}
-
-
-function remove_context {
-    local tar_dir=$1
-    local tar_war="${tar_dir}.war"
-    $RM $TOMCAT_DIR/webapps/$tar_dir $TOMCAT_DIR/webapps/$tar_war $TOMCAT_DIR/work/Catalina/localhost/$tar_dir
-    $RM $CONTEXTS_DIR/$1
-}
-
-
-# absolute path
-function abs_path {
-    if [ $1 == "." ]; then 
-        echo `pwd`
+# get or set the port of the service
+function cmd_port() {
+    if [ $# == 1 ]; then
+        sed -e '/<Connector port=".*" protocol="HTTP\/1\.1"/!d' \
+            -e 's/.*<Connector port="\(.*\)" .*/\1/' \
+            $TOMCAT_DIR/conf/server.xml
     else
-        echo "$(cd "$(dirname "$1")"; pwd)/$(basename "$1")"
+        if [ ! -f $TOMCAT_DIR/conf/server.xml.orig ]; then
+            $CP $TOMCAT_DIR/conf/server.xml $TOMCAT_DIR/conf/server.xml.orig
+        fi
+        sed "s/<Connector port=\".*\" protocol=\"HTTP\/1\.1\"/<Connector port=\"$2\" protocol=\"HTTP\/1\.1\"/" \
+            $TOMCAT_DIR/conf/server.xml > $TOMCAT_DIR/conf/server2.xml && \
+            $MV $TOMCAT_DIR/conf/server.xml $TOMCAT_DIR/conf/server.xml.bak && \
+            $MV $TOMCAT_DIR/conf/server2.xml $TOMCAT_DIR/conf/server.xml
     fi
+}
+
+# create a new context
+function cmd_create() {
+    check_args_num $# 2
+    create_context $2
+}
+
+# remove the context
+function cmd_remove() {
+    check_args_num $# 2
+    remove_context $2
+}
+
+# list the contexts or the projects of the context
+function cmd_list() {
+    if [ $# == 1 ]; then
+        $MKDIR $CONTEXTS_DIR
+        ls $CONTEXTS_DIR  # list all contexts
+    elif [ $# == 2 ]; then
+        ls $CONTEXTS_DIR/$2/src
+    elif [ $# == 3 ]; then
+        ls $CONTEXTS_DIR/$2/src/$3
+    else
+        echo wrong arguments
+    fi
+}
+
+# startup the service
+function cmd_startup() {
+    if [ ! -d "$TOMCAT_DIR/logs" ]; then
+        mkdir "$TOMCAT_DIR/logs"
+    fi
+    sh $TOMCAT_DIR/bin/startup.sh
+    echo "http://localhost:"`cmd_port port`"/ is ready."
+}
+
+# shutdown the service
+function cmd_shutdown() {
+    sh $TOMCAT_DIR/bin/shutdown.sh
+}
+
+# add the project to the content by link
+function cmd_link() {
+    # eg.
+    #  $ tomgrok link haha proj1 (proj1-alias)
+    # equals:
+    #  $ ln -s /xx/yy/.../proj1 /aa/bb/.../contexts/haha/[proj1|proj1-alias]
+    if [ $# -eq 3 ]; then
+        $LN `abs_path $3` $CONTEXTS_DIR/$2/src/`basename $3`
+    elif [ $# -eq 4 ]; then
+        $LN `abs_path $3` $CONTEXTS_DIR/$2/src/$4
+    else
+        echo wrong link arguments
+    fi
+}
+
+# add the project to the content by copy
+function cmd_copy() {
+    # eg.
+    #  $ tomgrok copy haha proj1 (proj1-alias)
+    # equals:
+    #  $ cp -r /xx/yy/.../proj1 /aa/bb/.../contexts/haha/[proj1|proj1-alias]
+    if [ $# -eq 3 ]; then
+        $CP `abs_path $3` $CONTEXTS_DIR/$2/src/`basename $3`
+    elif [ $# -eq 4 ]; then
+        $CP `abs_path $3` $CONTEXTS_DIR/$2/src/$4
+    else
+        echo wrong copy arguments
+    fi
+}
+
+# add all each subdirectory of the path as a project to the content by link
+function cmd_link_projects() {
+    if [ $# -eq 3 ]; then
+        $RM $CONTEXTS_DIR/$2/src
+        $LN `abs_path $3` $CONTEXTS_DIR/$2/src
+    else
+        echo wrong link arguments
+    fi
+}
+
+# add all each subdirectory of the path as a project to the content by copy
+function cmd_copy_projects() {
+    if [ $# -eq 3 ]; then
+        $RM $CONTEXTS_DIR/$2/src
+        $CP `abs_path $3` $CONTEXTS_DIR/$2/src
+    else
+        echo wrong copy arguments
+    fi
+}
+
+# delete the project in the context
+function cmd_delete() {
+    if [ $# == 3 ]; then
+        $RM $CONTEXTS_DIR/$2/src/`basename $3`
+    else
+        echo missing parameter
+    fi
+}
+
+# create index of the context
+function cmd_index() {
+    # $2: context name
+    # generate index data
+    OPENGROK_INSTANCE_BASE=$CONTEXTS_DIR/$2 \
+                          OPENGROK_TOMCAT_BASE=$TOMCAT_DIR \
+                          OPENGROK_WEBAPP_CONTEXT=$2 \
+                          OPENGROK_CONFIGURATION=`OPTCONF $2` \
+                          OPENGROK_WEBAPP_CFGADDR=none \
+                          OPENGROK_GENERATE_HISTORY=off \
+                          IGNORE_PATTERNS="-i .idea -i *.jar -i *.so -i *.iml -i *out/* -i *build/* -i *gradle/*" \
+                          $GROK index
+
+    # update configuration.xml in container
+    conf_pathname=`echo $CONTEXTS_DIR/$2/etc/configuration\.xml | sed 's/\//\\\\\//g'`
+    sed "s/<param-value>.*configuration\.xml<\/param-value>/<param-value>$conf_pathname<\/param-value>/" \
+        $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml > $TOMCAT_DIR/webapps/$2/WEB-INF/web2.xml && \
+        $CP $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml.bak && \
+        $MV $TOMCAT_DIR/webapps/$2/WEB-INF/web2.xml $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml
+}
+
+# to create index of the context
+function cmd_index_all() {
+    echo "TODO: each all contexts to index"
 }
 
 
@@ -115,125 +261,19 @@ function abs_path {
 #######
 
 case $1 in
-    'version')
-        print_versoin
-        ;;
-    'port')
-        if [ $# == 1 ]; then
-            sed -e '/<Connector port=".*" protocol="HTTP\/1\.1"/!d' \
-                -e 's/.*<Connector port="\(.*\)" .*/\1/' \
-                $TOMCAT_DIR/conf/server.xml
-        else
-            if [ ! -f $TOMCAT_DIR/conf/server.xml.orig ]; then
-                $CP $TOMCAT_DIR/conf/server.xml $TOMCAT_DIR/conf/server.xml.orig
-            fi
-            sed "s/<Connector port=\".*\" protocol=\"HTTP\/1\.1\"/<Connector port=\"$2\" protocol=\"HTTP\/1\.1\"/" \
-                $TOMCAT_DIR/conf/server.xml > $TOMCAT_DIR/conf/server2.xml && \
-                $MV $TOMCAT_DIR/conf/server.xml $TOMCAT_DIR/conf/server.xml.bak && \
-                $MV $TOMCAT_DIR/conf/server2.xml $TOMCAT_DIR/conf/server.xml
-        fi
-        ;;
-    'create')
-        check_args_num $# 2
-        create_context $2
-        ;;
-    'remove')
-        check_args_num $# 2
-        remove_context $2
-        ;;
-    'list')
-        if [ $# == 1 ]; then
-            $MKDIR $CONTEXTS_DIR
-            ls $CONTEXTS_DIR  # list all contexts
-        elif [ $# == 2 ]; then
-            ls $CONTEXTS_DIR/$2/src
-        elif [ $# == 3 ]; then
-            ls $CONTEXTS_DIR/$2/src/$3
-        else
-            echo wrong arguments
-        fi
-    	;;
-    'startup')
-    	if [ ! -d "$TOMCAT_DIR/logs" ]; then
-    		mkdir "$TOMCAT_DIR/logs"
-    	fi
-    	sh $TOMCAT_DIR/bin/startup.sh
-    	;;
-    'shutdown')
-    	sh $TOMCAT_DIR/bin/shutdown.sh
-    	;;
-    'link')
-    	# eg.
-    	#  $ tomgrok link haha proj1 (proj1-alias)
-    	# equals:
-    	#  $ ln -s /xx/yy/.../proj1 /aa/bb/.../contexts/haha/[proj1|proj1-alias]
-        if [ $# -eq 3 ]; then
-            $LN `abs_path $3` $CONTEXTS_DIR/$2/src/`basename $3`
-        elif [ $# -eq 4 ]; then
-            $LN `abs_path $3` $CONTEXTS_DIR/$2/src/$4
-        else
-            echo wrong link arguments
-        fi
-    	;;
-    'copy')
-    	# eg.
-    	#  $ tomgrok copy haha proj1 (proj1-alias)
-    	# equals:
-    	#  $ cp -r /xx/yy/.../proj1 /aa/bb/.../contexts/haha/[proj1|proj1-alias]
-        if [ $# -eq 3 ]; then
-            $CP `abs_path $3` $CONTEXTS_DIR/$2/src/`basename $3`
-        elif [ $# -eq 4 ]; then
-            $CP `abs_path $3` $CONTEXTS_DIR/$2/src/$4
-        else
-            echo wrong copy arguments
-        fi
-    	;;
-    'link-projects')
-        $RM $CONTEXTS_DIR/$2/src
-        if [ $# -eq 3 ]; then
-            $LN `abs_path $3` $CONTEXTS_DIR/$2/src
-        else
-            echo wrong link arguments
-        fi
-    	;;
-    'copy-projects')
-        $RM $CONTEXTS_DIR/$2/src
-        if [ $# -eq 3 ]; then
-            $CP `abs_path $3` $CONTEXTS_DIR/$2/src
-        else
-            echo wrong copy arguments
-        fi
-    	;;
-    'delete')
-        if [ $# == 3 ]; then
-    	        $RM $CONTEXTS_DIR/$2/src/`basename $3`
-        else
-            echo missing parameter
-        fi
-    	;;
-    'index')
-        # $2: context name
-    	# generate index data
-    	OPENGROK_INSTANCE_BASE=$CONTEXTS_DIR/$2 \
-    	 OPENGROK_TOMCAT_BASE=$TOMCAT_DIR \
-    	 OPENGROK_WEBAPP_CONTEXT=$2 \
-         OPENGROK_CONFIGURATION=`OPTCONF $2` \
-         OPENGROK_WEBAPP_CFGADDR=none \
-         OPENGROK_GENERATE_HISTORY=off \
-         IGNORE_PATTERNS="-i .idea -i *.jar -i *.so -i *.iml -i *out/* -i *build/* -i *gradle/*" \
-    	 $GROK index
-
-     	# update configuration.xml in container
-        conf_pathname=`echo $CONTEXTS_DIR/$2/etc/configuration\.xml | sed 's/\//\\\\\//g'`
-    	sed "s/<param-value>.*configuration\.xml<\/param-value>/<param-value>$conf_pathname<\/param-value>/" \
-    	 $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml > $TOMCAT_DIR/webapps/$2/WEB-INF/web2.xml && \
-    	 $CP $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml.bak && \
-    	 $MV $TOMCAT_DIR/webapps/$2/WEB-INF/web2.xml $TOMCAT_DIR/webapps/$2/WEB-INF/web.xml
-    	;;
-    'index-all')
-    	# todo each all contexts to index
-    	;;
-    *)
-    	print_help
-    	;;
+    'version')          cmd_print_version    ;;
+    'port')             cmd_port          $@ ;;
+    'create')           cmd_create        $@ ;;
+    'remove')           cmd_remove        $@ ;;
+    'list')             cmd_list          $@ ;;
+    'startup')          cmd_startup          ;;
+    'shutdown')         cmd_shutdown         ;;
+    'link')             cmd_link          $@ ;;
+    'copy')             cmd_copy          $@ ;;
+    'link-projects')    cmd_link_projects $@ ;;
+    'copy-projects')    cmd_copy_projects $@ ;;
+    'delete')           cmd_delete        $@ ;;
+    'index')            cmd_index         $@ ;;
+    'index-all')        cmd_index_all     $@ ;;
+    *)                  cmd_print_help       ;;
 esac
