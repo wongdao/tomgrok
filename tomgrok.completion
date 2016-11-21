@@ -11,6 +11,14 @@ function _list_contexts() {
     fi
 }
 
+function _list_path() {
+    COMPREPLY=($(compgen -f  -- "${COMP_WORDS[${COMP_CWORD}]}" ))
+    for ((ff=0; ff<${#COMPREPLY[@]}; ff++)); do
+        test -d "${COMPREPLY[$ff]}" && COMPREPLY[$ff]="${COMPREPLY[$ff]}/"
+        test -f "${COMPREPLY[$ff]}" && COMPREPLY[$ff]="${COMPREPLY[$ff]}"
+    done
+}
+
 function _tomgrok() {
     COMPREPLY=()
     local cur=${COMP_WORDS[COMP_CWORD]};
@@ -19,44 +27,33 @@ function _tomgrok() {
     local subcmd=${COMP_WORDS[1]}
     local subcmdopts=${COMP_WORDS[2]}
 
-    case $com in
-        'tomgrok')
-            COMPREPLY=($(compgen -W 'create remove list startup shutdown link copy link-projects copy-projects delete index index-all port version help' -- $cur))
-            ;;
-        'remove')
-            _list_contexts
-            ;;
-        'delete')
-            _list_contexts
-            ;;
-        'list')
-            _list_contexts
-            ;;
-        'link' | 'copy')
-            _list_contexts
-            ;;
-        'link-projects' | 'copy-projects')
-            _list_contexts
-            ;;
-        'index')
-            _list_contexts
-            ;;
-        *)
-            COMPREPLY=($(compgen -f  -- "${COMP_WORDS[${COMP_CWORD}]}" ))
-            # for projects completion
-            case "${subcmd}" in
-                'delete' )
-                    _list_contexts ${subcmdopts}/src
-                    ;;
-            esac
+    opts="create remove list startup shutdown link copy link-projects copy-projects delete index index-all port version help"
 
-            # others
-            for ((ff=0; ff<${#COMPREPLY[@]}; ff++)); do
-                test -d "${COMPREPLY[$ff]}" && COMPREPLY[$ff]="${COMPREPLY[$ff]}/"
-                test -f "${COMPREPLY[$ff]}" && COMPREPLY[$ff]="${COMPREPLY[$ff]}"
-            done
-            ;;
-    esac
+    if [ ${COMP_CWORD} == 1 ]; then
+        COMPREPLY=($(compgen -W "${opts}" -- $cur))
+        return 0
+    else
+        case $com in
+            index | remove | delete | list | link | link-projects | copy | copy-projects )
+                _list_contexts
+                ;;
+            * )
+                # for projects completion
+                case "${subcmd}" in
+                    delete | list )
+                        if [ ${COMP_CWORD} == 3 ]; then
+                            _list_contexts ${subcmdopts}/src
+                        fi
+                        return 0
+                        ;;
+                    create | copy | copy-projects | link | link-projects )
+                        _list_path
+                        return 0
+                        ;;
+                esac
+                ;;
+        esac
+    fi
 }
 complete -F _tomgrok tomgrok
 
