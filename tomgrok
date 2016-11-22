@@ -1,6 +1,5 @@
 #!/bin/bash
 
-export CP="cp"
 export RM="rm -fr"
 export MKDIR="mkdir -p"
 export LN="ln -s"
