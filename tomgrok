@@ -8,8 +8,8 @@ export MV="mv"
 
 export THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd . && pwd )"
 export CONTEXTS_DIR="$THIS_SCRIPT_DIR/contexts"
-export TOMCAT_DIR="$THIS_SCRIPT_DIR/apache-tomcat-7.0.70"
-export OPENGROK_DIR="$THIS_SCRIPT_DIR/opengrok-0.12.1.5"
+export TOMCAT_DIR="$THIS_SCRIPT_DIR/apache-tomcat-8.5.16"
+export OPENGROK_DIR="$THIS_SCRIPT_DIR/opengrok-1.1-rc5"
 
 export GROK=$OPENGROK_DIR/bin/OpenGrok
 export PRESERVED_OPTCONF=$THIS_SCRIPT_DIR/tomgrok-default-conf/options.conf
@@ -234,6 +234,7 @@ function cmd_index() {
     # generate index data
     OPENGROK_INSTANCE_BASE=$CONTEXTS_DIR/$2 \
                           OPENGROK_TOMCAT_BASE=$TOMCAT_DIR \
+                          OPENGROK_DISTRIBUTION_BASE=$OPENGROK_DIR/lib \
                           OPENGROK_WEBAPP_CONTEXT=$2 \
                           OPENGROK_CONFIGURATION=`OPTCONF $2` \
                           OPENGROK_WEBAPP_CFGADDR=none \

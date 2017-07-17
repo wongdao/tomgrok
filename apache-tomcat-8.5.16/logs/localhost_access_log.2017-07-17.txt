@@ -1,0 +1,5 @@
+0:0:0:0:0:0:0:1 - - [17/Jul/2017:00:24:28 +0800] "GET /mysrc1/xref/hipda/hipda/src/main/java/net/jejer/hipda/ui/HiApplication.java HTTP/1.1" 200 56561
+0:0:0:0:0:0:0:1 - - [17/Jul/2017:00:24:29 +0800] "GET /mysrc1/default/print.css HTTP/1.1" 200 11338
+0:0:0:0:0:0:0:1 - - [17/Jul/2017:00:24:29 +0800] "GET /mysrc1/default/img/combined.png HTTP/1.1" 200 4930
+0:0:0:0:0:0:0:1 - - [17/Jul/2017:00:24:29 +0800] "GET /mysrc1/default/img/folding.png HTTP/1.1" 200 189
+0:0:0:0:0:0:0:1 - - [17/Jul/2017:00:24:30 +0800] "GET /mysrc1/default/img/icon.png HTTP/1.1" 200 535

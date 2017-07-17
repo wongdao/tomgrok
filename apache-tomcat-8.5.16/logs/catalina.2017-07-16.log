@@ -1,0 +1,87 @@
+16-Jul-2017 17:09:01.652 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Server version:        Apache Tomcat/8.5.16
+16-Jul-2017 17:09:01.660 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Jun 21 2017 17:01:09 UTC
+16-Jul-2017 17:09:01.660 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Server number:         8.5.16.0
+16-Jul-2017 17:09:01.660 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Mac OS X
+16-Jul-2017 17:09:01.660 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            10.10.5
+16-Jul-2017 17:09:01.660 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          x86_64
+16-Jul-2017 17:09:01.661 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/Contents/Home/jre
+16-Jul-2017 17:09:01.661 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           1.8.0_66-b17
+16-Jul-2017 17:09:01.661 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Oracle Corporation
+16-Jul-2017 17:09:01.661 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/apache-tomcat-8.5.16
+16-Jul-2017 17:09:01.661 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         /Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/apache-tomcat-8.5.16
+16-Jul-2017 17:09:01.662 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=/Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/apache-tomcat-8.5.16/conf/logging.properties
+16-Jul-2017 17:09:01.662 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+16-Jul-2017 17:09:01.663 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djdk.tls.ephemeralDHKeySize=2048
+16-Jul-2017 17:09:01.663 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+16-Jul-2017 17:09:01.663 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=/Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/apache-tomcat-8.5.16
+16-Jul-2017 17:09:01.663 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=/Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/apache-tomcat-8.5.16
+16-Jul-2017 17:09:01.663 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=/Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/apache-tomcat-8.5.16/temp
+16-Jul-2017 17:09:01.664 信息 [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [/Users/huangtao/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.]
+16-Jul-2017 17:09:01.895 信息 [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+16-Jul-2017 17:09:01.940 信息 [main] org.apache.tomcat.util.net.NioSelectorPool.getSharedSelector Using a shared selector for servlet write/read
+16-Jul-2017 17:09:01.947 信息 [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["ajp-nio-8009"]
+16-Jul-2017 17:09:01.950 信息 [main] org.apache.tomcat.util.net.NioSelectorPool.getSharedSelector Using a shared selector for servlet write/read
+16-Jul-2017 17:09:01.950 信息 [main] org.apache.catalina.startup.Catalina.load Initialization processed in 890 ms
+16-Jul-2017 17:09:02.008 信息 [main] org.apache.catalina.core.StandardService.startInternal Starting service [Catalina]
+16-Jul-2017 17:09:02.009 信息 [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet Engine: Apache Tomcat/8.5.16
+16-Jul-2017 17:09:02.022 信息 [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/apache-tomcat-8.5.16/webapps/docs]
+16-Jul-2017 17:09:02.438 信息 [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/apache-tomcat-8.5.16/webapps/docs] has finished in [415] ms
+16-Jul-2017 17:09:02.438 信息 [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/apache-tomcat-8.5.16/webapps/examples]
+16-Jul-2017 17:09:02.813 信息 [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/apache-tomcat-8.5.16/webapps/examples] has finished in [375] ms
+16-Jul-2017 17:09:02.814 信息 [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/apache-tomcat-8.5.16/webapps/host-manager]
+16-Jul-2017 17:09:02.844 信息 [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/apache-tomcat-8.5.16/webapps/host-manager] has finished in [30] ms
+16-Jul-2017 17:09:02.844 信息 [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/apache-tomcat-8.5.16/webapps/manager]
+16-Jul-2017 17:09:02.873 信息 [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/apache-tomcat-8.5.16/webapps/manager] has finished in [28] ms
+16-Jul-2017 17:09:02.873 信息 [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/apache-tomcat-8.5.16/webapps/mysrc1]
+16-Jul-2017 17:09:03.639 信息 [localhost-startStop-1] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+16-Jul-2017 17:09:03.721 警告 [localhost-startStop-1] org.opensolaris.opengrok.authorization.AuthorizationFramework.reload Plugin directory not found or not readable: /Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/contexts/mysrc1/data/../plugins. All requests allowed.
+16-Jul-2017 17:09:03.730 信息 [localhost-startStop-1] org.opensolaris.opengrok.web.WebappListener.contextInitialized Could not load statistics from a file.
+ java.io.FileNotFoundException: /Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/contexts/mysrc1/data/statistics.json (No such file or directory)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(FileInputStream.java:195)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at org.opensolaris.opengrok.configuration.RuntimeEnvironment.loadStatistics(RuntimeEnvironment.java:1529)
+	at org.opensolaris.opengrok.configuration.RuntimeEnvironment.loadStatistics(RuntimeEnvironment.java:1515)
+	at org.opensolaris.opengrok.web.WebappListener.contextInitialized(WebappListener.java:107)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4745)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5207)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase.addChildInternal(ContainerBase.java:752)
+	at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:728)
+	at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:734)
+	at org.apache.catalina.startup.HostConfig.deployDirectory(HostConfig.java:1144)
+	at org.apache.catalina.startup.HostConfig$DeployDirectory.run(HostConfig.java:1878)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+
+16-Jul-2017 17:09:03.740 信息 [localhost-startStop-1] org.opensolaris.opengrok.web.WebappListener.contextInitialized Could not load statistics from a file.
+ java.io.FileNotFoundException: /Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/contexts/mysrc1/data/statistics.json (No such file or directory)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(FileInputStream.java:195)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at org.opensolaris.opengrok.configuration.RuntimeEnvironment.loadStatistics(RuntimeEnvironment.java:1529)
+	at org.opensolaris.opengrok.configuration.RuntimeEnvironment.loadStatistics(RuntimeEnvironment.java:1515)
+	at org.opensolaris.opengrok.web.WebappListener.contextInitialized(WebappListener.java:122)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4745)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5207)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase.addChildInternal(ContainerBase.java:752)
+	at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:728)
+	at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:734)
+	at org.apache.catalina.startup.HostConfig.deployDirectory(HostConfig.java:1144)
+	at org.apache.catalina.startup.HostConfig$DeployDirectory.run(HostConfig.java:1878)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+
+16-Jul-2017 17:09:06.990 信息 [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/apache-tomcat-8.5.16/webapps/mysrc1] has finished in [4,117] ms
+16-Jul-2017 17:09:06.991 信息 [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/apache-tomcat-8.5.16/webapps/ROOT]
+16-Jul-2017 17:09:07.011 信息 [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Volumes/MacintoshHD/Users/huangtao/Documents/MyProjects/tomgrok/apache-tomcat-8.5.16/webapps/ROOT] has finished in [19] ms
+16-Jul-2017 17:09:07.016 信息 [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+16-Jul-2017 17:09:07.025 信息 [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["ajp-nio-8009"]
+16-Jul-2017 17:09:07.028 信息 [main] org.apache.catalina.startup.Catalina.start Server startup in 5077 ms
