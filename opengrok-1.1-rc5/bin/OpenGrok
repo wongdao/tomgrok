@@ -134,7 +134,7 @@ else
 	exit 1
 fi
 
-SCRIPT_FILE=${BASH_SOURCE[0]}
+SCRIPT_FILE=`readlink -f "${0}"`
 SCRIPT_DIRECTORY=`dirname "${SCRIPT_FILE}"`
 
 #
