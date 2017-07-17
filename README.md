@@ -9,7 +9,9 @@ Tomgrok 是基于对 OpenGrok 和 Apache Tomcat 包装的一套脚本，致力�
 
 下载后直接运行 `tomgrok` 即可，建议设置目录到你的搜索路径 PATH，并将自动完成脚本 `tomgrok.completion` 加入到你的 `~/.bashrc`。
 
-注意：需要 Exuberant Ctags 或 Universal Ctags。
+注意：
+1. 需要 Exuberant Ctags 或 Universal Ctags；
+2. bsd 系统需要安装 GNU 版本的 readlink，比如 OSX 需要用 `brew install coreutils`，然后 `alias readlink=greadlink`。
 
 #### 使用说明
 
