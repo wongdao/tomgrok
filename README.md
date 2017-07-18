@@ -11,7 +11,11 @@ Tomgrok 是基于对 OpenGrok 和 Apache Tomcat 包装的一套脚本，致力�
 
 注意：
 1. 需要 Exuberant Ctags 或 Universal Ctags；
-2. bsd 系统需要安装 GNU 版本的 readlink，比如 OSX 需要用 `brew install coreutils`，然后 `alias readlink=greadlink`。
+2. bsd 系统需要安装 GNU 版本的 readlink，比如 OSX 需要用 `brew install coreutils`，然后用 `greadlink` 替代系统的 `readlink`，下面是
+一个方法：
+   1. 设置 PATH 环境变量，使 `/usr/local/bin` 位于 `/usr/bin` 之前
+   2. 在 `/usr/local/bin` 建立一个名为 `readlink` 的链接指向 `greadlink`
+          `ln -s /usr/local/bin/greadlink /usr/local/bin/readlink`
 
 #### 使用说明
 
